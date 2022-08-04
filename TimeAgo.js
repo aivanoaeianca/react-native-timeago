@@ -10,6 +10,7 @@ export default class TimeAgo extends Component {
     hideAgo?: boolean
   };
   state: { timer: null | number } = { timer: null };
+  _isMounted = false;
 
   static defaultProps = {
     hideAgo: false,
@@ -17,11 +18,16 @@ export default class TimeAgo extends Component {
   };
 
   componentDidMount() {
+    this._isMounted = true;
     this.createTimer();
   }
 
+  componentDidUpdate(){
+    this._isMounted = true;
+  }
+
   createTimer = () => {
-    this.setState({
+    this._isMounted && this.setState({
       timer: setTimeout(() => {
         this.update();
       }, this.props.interval)
@@ -29,11 +35,12 @@ export default class TimeAgo extends Component {
   };
 
   componentWillUnmount() {
+    this._isMounted = false;
     clearTimeout(this.state.timer);
   }
 
   update = () => {
-    this.forceUpdate();
+    this._isMounted && this.forceUpdate();
     this.createTimer();
   };
 
